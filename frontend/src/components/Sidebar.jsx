@@ -8,6 +8,7 @@ import {
   User,
   MoreHorizontal,
   Plus,
+  Settings,
 } from "lucide-react";
 
 export function Sidebar() {
@@ -16,43 +17,31 @@ export function Sidebar() {
   const navItems = [
     { name: "Home", path: "/", icon: Home },
     { name: "Explore", path: "/explore", icon: Search },
-    { name: "Notifications", path: "/notifications", icon: Bell, badge: true },
+    { name: "Settings", path: "/settings", icon: Settings},
+    // { name: "Notifications", path: "/notifications", icon: Bell, badge: true },
     { name: "Messages", path: "/messages", icon: Mail },
     { name: "Bookmarks", path: "/bookmarks", icon: Bookmark },
     { name: "Profile", path: "/profile", icon: User },
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-20 md:w-64 bg-white border-r border-black/10 flex flex-col justify-between py-6 px-3 md:px-4">
+    <aside className="fixed left-0 top-16 md:top-0 h-[calc(100vh-4rem)] md:h-screen w-20 md:w-64 bg-white border-r border-gray-200 flex flex-col justify-between py-6 px-3 md:px-4 shadow-sm">
       <div>
         {/* Logo */}
         <Link
           to="/"
-          className="flex items-center justify-center md:justify-start gap-2 px-2 mb-8"
+          className="hidden md:flex items-center justify-start gap-2 px-3 mb-8 hover:opacity-80 transition-opacity"
         >
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 29 38"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="shrink-0"
-          >
-            <path
-              d="m8.75 11.3 6.75 3.884 6.75-3.885M8.75 34.58v-7.755L2 22.939m27 0-6.75 3.885v7.754M2.405 15.408 15.5 22.954l13.095-7.546M15.5 38V22.939M29 28.915V16.962a2.98 2.98 0 0 0-1.5-2.585L17 8.4a3.01 3.01 0 0 0-3 0L3.5 14.377A3 3 0 0 0 2 16.962v11.953A2.98 2.98 0 0 0 3.5 31.5L14 37.477a3.01 3.01 0 0 0 3 0L27.5 31.5a3 3 0 0 0 1.5-2.585"
-              stroke="#000000"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <span className="hidden md:block text-lg font-semibold tracking-tight text-black">
-            SocialSphere
+          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+            S
+          </div>
+          <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Social
           </span>
         </Link>
 
         {/* Nav Items */}
-        <nav className="flex flex-col gap-1">
+        <nav className="flex flex-col gap-2">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             const Icon = item.icon;
@@ -60,24 +49,22 @@ export function Sidebar() {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`group relative flex items-center justify-center md:justify-start gap-4 px-3 py-3 rounded-full transition-colors duration-200 ${
+                className={`group relative flex items-center justify-center md:justify-start gap-4 px-4 py-3 rounded-xl transition-all duration-200 ${
                   isActive
-                    ? "bg-black text-white"
-                    : "text-black hover:bg-black/5"
+                    ? "bg-blue-500 text-white shadow-md"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-500"
                 }`}
               >
-                <span className="relative">
-                  <Icon
-                    size={22}
-                    strokeWidth={isActive ? 2.4 : 2}
-                    className="shrink-0"
-                  />
+                <span className="relative flex-shrink-0">
+                  <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
                   {item.badge && (
-                    <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-black ring-2 ring-white group-hover:ring-white" />
+                    <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 ring-2 ring-white animate-pulse" />
                   )}
                 </span>
                 <span
-                  className={`hidden md:block text-base ${isActive ? "font-semibold" : "font-normal"}`}
+                  className={`hidden md:block text-base font-medium ${
+                    isActive ? "font-semibold" : ""
+                  }`}
                 >
                   {item.name}
                 </span>
@@ -87,24 +74,27 @@ export function Sidebar() {
         </nav>
 
         {/* Post Button */}
-        <button className="mt-6 w-full flex items-center justify-center gap-2 bg-black text-white rounded-full py-3 md:py-3.5 font-semibold hover:bg-black/85 transition-colors duration-200">
-          <Plus size={20} className="md:hidden" strokeWidth={2.5} />
-          <span className="hidden md:block">Post</span>
+        <button className="mt-8 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl py-3 md:py-4 font-bold hover:shadow-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200">
+          <Plus size={22} className="md:hidden" strokeWidth={2.5} />
+          <span className="hidden md:block text-lg">Compose</span>
         </button>
       </div>
 
       {/* Profile Card */}
-      <button className="flex items-center justify-center md:justify-between gap-3 px-2 py-2 rounded-full hover:bg-black/5 transition-colors duration-200">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-full bg-black flex items-center justify-center text-white text-sm font-semibold shrink-0">
+      <button className="flex items-center justify-center md:justify-between gap-3 px-3 py-3 rounded-xl hover:bg-gray-100 transition-all duration-200 w-full">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
             JD
           </div>
-          <div className="hidden md:block text-left leading-tight">
-            <p className="text-sm font-semibold text-black">Jane Doe</p>
-            <p className="text-xs text-black/50">@janedoe</p>
+          <div className="hidden md:block text-left leading-tight min-w-0">
+            <p className="text-sm font-bold text-gray-900 truncate">Jane Doe</p>
+            <p className="text-xs text-gray-500 truncate">@janedoe</p>
           </div>
         </div>
-        <MoreHorizontal size={18} className="hidden md:block text-black/50" />
+        <MoreHorizontal
+          size={20}
+          className="hidden md:block text-gray-500 flex-shrink-0 hover:text-gray-700"
+        />
       </button>
     </aside>
   );
