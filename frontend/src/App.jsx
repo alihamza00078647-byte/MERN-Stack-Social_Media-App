@@ -12,6 +12,8 @@ import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { PostContext } from "./Context/PostContext";
 import { Loadings } from "./components/Loading";
+import { Toaster } from 'react-hot-toast';
+import { CreatePost } from "./pages/CreatePost";
 
 function App() {
   const {token, isAuthenticated, loading} = useContext(PostContext);
@@ -39,6 +41,7 @@ function App() {
   return (
     <>
       <Navbar />
+      <Toaster />
       <div className="flex min-h-screen">
         <Sidebar />
         <main className="flex-1 md:ml-64 border-l border-gray-200">
@@ -47,7 +50,7 @@ function App() {
             <Route path="/explore" element={<Explore />} />
             <Route path="/notifications" element={<Home />} />
             <Route path="/messages" element={<Messages />} />
-            <Route path="/bookmarks" element={<Bookmarks />} />
+            <Route path="/posts" element={<CreatePost />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/" replace />} />

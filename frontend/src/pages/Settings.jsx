@@ -1,10 +1,28 @@
 import { ChevronRight, Moon, Bell, Lock, Eye } from "lucide-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { PostContext } from "../Context/PostContext";
+import toast from "react-hot-toast";
 
 function Settings() {
+
+  const {token, setToken, navigate} = useContext(PostContext);
+
+
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
 
+  const logout = async () => {
+    if (token) {
+      setToken('');
+      localStorage.removeItem('token');
+      navigate('/login');
+      toast.success("Logout Successfully");
+    } else {
+      console.log("Token Error", token);
+    }
+  }
+
+  
   const settingsGroups = [
     {
       title: "Appearance",
@@ -120,7 +138,7 @@ function Settings() {
             <h3 className="font-bold text-gray-900">Account</h3>
           </div>
           <div className="p-4 md:p-6">
-            <button className="w-full px-4 py-2 rounded-full border-2 border-red-500 text-red-600 font-semibold hover:bg-red-50 transition-colors">
+            <button onClick={logout} className="w-full px-4 py-2 rounded-full border-2 border-red-500 text-red-600 font-semibold hover:bg-red-50 transition-colors">
               Logout
             </button>
             <p className="text-xs text-gray-500 mt-2 text-center">

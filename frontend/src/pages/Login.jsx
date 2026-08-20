@@ -6,7 +6,7 @@ import { PostContext } from "../Context/PostContext";
 
 export function Login() {
 
-  const {BackendURL, navigate} = useContext(PostContext);
+  const {BackendURL, navigate, setToken, token} = useContext(PostContext);
 
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -27,7 +27,7 @@ export function Login() {
     confirmPassword: "",
   });
 
-  const API_URL = "http://localhost:3000/api/user";
+  // const API_URL = "http://localhost:3000/api/user";
 
   // Handle Login Form Change
   const handleLoginChange = (e) => {
@@ -62,14 +62,15 @@ export function Login() {
     setLoading(true);
 
     try {
-      const { data } = await axios.post(`${API_URL}/login`, {
+      const { data } = await axios.post(`${BackendURL}/api/user/login`, {
         email: loginForm.email,
         password: loginForm.password,
       });
 
       // Store token in localStorage
-      localStorage.setItem("authToken", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      setToken(data.token);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem('user', data.user);
 
       setSuccess("Login successful! Redirecting...");
       setTimeout(() => {
@@ -119,7 +120,7 @@ export function Login() {
     setLoading(true);
 
     try {
-      const { data } = await axios.post(`${API_URL}/register`, {
+      const { data } = await axios.post(`${BackendURL}/api/user/register`, {
         name: signupForm.name,
         email: signupForm.email,
         password: signupForm.password,
@@ -127,8 +128,8 @@ export function Login() {
       });
 
       // Store token in localStorage
-      localStorage.setItem("authToken", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      setToken()
+      localStorage.setItem("token", token);
 
       setSuccess("Registration successful! Redirecting...");
       setTimeout(() => {

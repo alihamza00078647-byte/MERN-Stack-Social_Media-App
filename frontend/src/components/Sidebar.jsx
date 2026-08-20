@@ -20,7 +20,7 @@ export function Sidebar() {
     { name: "Settings", path: "/settings", icon: Settings},
     // { name: "Notifications", path: "/notifications", icon: Bell, badge: true },
     { name: "Messages", path: "/messages", icon: Mail },
-    { name: "Bookmarks", path: "/bookmarks", icon: Bookmark },
+    { name: "Posts", path: "/posts", icon: Bookmark },
     { name: "Profile", path: "/profile", icon: User },
   ];
 

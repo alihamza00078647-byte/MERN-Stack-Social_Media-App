@@ -10,16 +10,21 @@ export function PostContextProvider({ children }) {
   const BackendURL = "http://localhost:3000"
   
 
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
+
+
+  const getReelsList = async () => {
+    
+  }
 
   
   
   useEffect(() => {
     // Check if user is authenticated
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("token");
 
     if (token) {
       setIsAuthenticated(true);
@@ -32,10 +37,14 @@ export function PostContextProvider({ children }) {
   }, [token]);
 
 
+
+
   const value = {
     token, isAuthenticated, loading, setLoading,
-    BackendURL, navigate
+    BackendURL, navigate, setToken
   };
+
+
 
   return <PostContext.Provider value={value}>{children}</PostContext.Provider>;
 }

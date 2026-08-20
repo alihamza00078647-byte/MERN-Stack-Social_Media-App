@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const { userRouter } = require('./Router/userRouter');
 const app = express();
 const cors = require('cors');
+const { postRouter } = require('./Router/postRouter');
 
 // Middlewares
 app.use(express.json());
@@ -38,11 +39,14 @@ connectDB();
 
 // Routes
 app.use('/api/user', userRouter);
+app.use('/api/data', postRouter);
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-    res.json({ success: true, message: 'Server is running' });
-});
+
+// // Health check endpoint
+// app.get('/api/health', (req, res) => {
+//     res.json({ success: true, message: 'Server is running' });
+// });
+
 
 // 404 handler
 app.use((req, res) => {
