@@ -99,6 +99,7 @@ const Login = async (req, res) => {
         // Find user by email (include password since it's not selected by default)
         const user = await userModel.findOne({ email: email.toLowerCase() }).select('+password');
         
+
         if (!user) {
             return res.status(401).json({
                 success: false,

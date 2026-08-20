@@ -65,7 +65,7 @@ export function Login() {
       const { data } = await axios.post(`${BackendURL}/api/user/login`, {
         email: loginForm.email,
         password: loginForm.password,
-      });
+      }, {headers: {token}});
 
       // Store token in localStorage
       setToken(data.token);
@@ -128,8 +128,8 @@ export function Login() {
       });
 
       // Store token in localStorage
-      setToken()
       localStorage.setItem("token", token);
+      setToken(localStorage.getItem("token"));
 
       setSuccess("Registration successful! Redirecting...");
       setTimeout(() => {

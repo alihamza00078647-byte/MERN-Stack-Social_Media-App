@@ -31,7 +31,7 @@ export function CreatePost() {
 
   const fileInputRef = useRef(null);
   const user = JSON.parse(
-    localStorage.getItem("user") || '{"name": "Authenticated User"}',
+    localStorage.getItem("user"),
   );
 
   
@@ -79,7 +79,7 @@ export function CreatePost() {
       image: imagePreview,
       location,
       visibility,
-      createdAt: new Date().toISOString(),
+      // createdAt: new Date().toISOString(),
     };
 
     
