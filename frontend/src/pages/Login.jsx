@@ -3,10 +3,12 @@ import { useNavigate, Link } from "react-router-dom";
 import { Mail, Lock, User, Eye, EyeOff, Loader } from "lucide-react";
 import axios from "axios";
 import { PostContext } from "../Context/PostContext";
+import toast from "react-hot-toast";
 
 export function Login() {
 
-  const {BackendURL, navigate, setToken, token} = useContext(PostContext);
+  const {BackendURL, navigate, setToken, token, setUser} = useContext(PostContext);
+
 
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -67,12 +69,16 @@ export function Login() {
         password: loginForm.password,
       }, {headers: {token}});
 
-      // Store token in localStorage
-      setToken(data.token);
-      localStorage.setItem("token", data.token);
-      localStorage.setItem('user', data.user);
-
-      setSuccess("Login successful! Redirecting...");
+      if (data.success) {
+        // Store token in localStorage
+        setToken(data.token);
+        setUser(data.user)
+        localStorage.setItem("token", data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setSuccess("Login successful! Redirecting...");
+      } else {
+        toast.error(data.message);
+      }
       setTimeout(() => {
         navigate("/");
       }, 1500);

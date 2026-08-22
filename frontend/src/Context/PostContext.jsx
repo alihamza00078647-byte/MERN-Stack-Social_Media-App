@@ -13,7 +13,7 @@ export function PostContextProvider({ children }) {
   const [token, setToken] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-
+  const [user, setUser] = useState(null);
 
 
   const getReelsList = async () => {
@@ -21,18 +21,22 @@ export function PostContextProvider({ children }) {
   }
 
   
+
+  
   
   useEffect(() => {
     // Check if user is authenticated
     const token = localStorage.getItem("token");
-
+    
     if (token) {
+      let userJsonObj = localStorage.getItem('user');
+      let User = JSON.parse(userJsonObj);
+      setUser(User);
       setIsAuthenticated(true);
       setToken(token);
     } else {
       setIsAuthenticated(false);
     }
-
     setLoading(false);
   }, [token]);
 
@@ -41,7 +45,7 @@ export function PostContextProvider({ children }) {
 
   const value = {
     token, isAuthenticated, loading, setLoading,
-    BackendURL, navigate, setToken
+    BackendURL, navigate, setToken, user, setUser
   };
 
 

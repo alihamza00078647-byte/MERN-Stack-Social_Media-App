@@ -16,7 +16,11 @@ import { PostContext } from "../Context/PostContext";
 import toast from "react-hot-toast";
 
 export function CreatePost() {
-  const { navigate, token, BackendURL } = useContext(PostContext);
+  const { navigate, token, BackendURL, user } = useContext(PostContext);
+
+  // setToken('');
+  // localStorage.removeItem('user')
+  // localStorage.removeItem('token')
 
   const [content, setContent] = useState("");
   const [tags, setTags] = useState(["react", "webdev"]);
@@ -30,9 +34,9 @@ export function CreatePost() {
 
 
   const fileInputRef = useRef(null);
-  const user = JSON.parse(
-    localStorage.getItem("user"),
-  );
+  // const user = JSON.parse(
+  //   localStorage.getItem("user"),
+  // );
 
   
   // Handle Image Upload & Preview
@@ -144,7 +148,7 @@ export function CreatePost() {
         {/* User Info & Audience Selector */}
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-base shadow-sm">
-            {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+            {user ? user.name.charAt(0).toUpperCase() : "U"}
           </div>
           <div>
             <span className="font-bold text-gray-900 block text-sm">

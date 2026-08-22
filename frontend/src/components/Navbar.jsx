@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, X, Menu } from "lucide-react";
+import { PostContext } from "../Context/PostContext";
 
 export function Navbar() {
+  const { token, user } = useContext(PostContext);
+
+
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Explore", path: "/explore" },
@@ -51,14 +55,21 @@ export function Navbar() {
               </Link>
             ))}
           </div>
-          <div className="flex items-center gap-3 ml-4 pl-4 border-l border-gray-200">
-            <button className="px-6 py-2 rounded-full border-2 border-blue-500 text-blue-600 font-semibold hover:bg-blue-50 transition-colors">
-              Sign Up
-            </button>
-            <button className="px-6 py-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold hover:shadow-lg transition-all">
-              Login
-            </button>
-          </div>
+
+          {token ? (
+            <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-base shadow-sm">
+              {user ? user.name.charAt(0).toUpperCase() : "U"}
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 ml-4 pl-4 border-l border-gray-200">
+              <button className="px-6 py-2 rounded-full border-2 border-blue-500 text-blue-600 font-semibold hover:bg-blue-50 transition-colors">
+                Sign Up
+              </button>
+              <button className="px-6 py-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold hover:shadow-lg transition-all">
+                Login
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
