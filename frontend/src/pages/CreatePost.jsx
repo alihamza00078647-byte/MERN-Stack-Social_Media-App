@@ -18,13 +18,11 @@ import toast from "react-hot-toast";
 export function CreatePost() {
   const { navigate, token, BackendURL, user } = useContext(PostContext);
 
-  // setToken('');
-  // localStorage.removeItem('user')
-  // localStorage.removeItem('token')
 
   const [content, setContent] = useState("");
   const [tags, setTags] = useState(["react", "webdev"]);
   const [tagInput, setTagInput] = useState("");
+  const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [location, setLocation] = useState("");
   const [showLocationInput, setShowLocationInput] = useState(false);
@@ -43,13 +41,15 @@ export function CreatePost() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setImageFile(file); // actual File object, sent to backend via multer
       const reader = new FileReader();
-      reader.onloadend = () => setImagePreview(reader.result);
+      reader.onloadend = () => setImagePreview(reader.result); // only for preview UI
       reader.readAsDataURL(file);
     }
   };
 
   const removeImage = () => {
+    setImageFile(null);
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
@@ -77,28 +77,31 @@ export function CreatePost() {
 
     setIsSubmitting(true);
 
-    const postPayload = {
-      content,
-      tags,
-      image: imagePreview,
-      location,
-      visibility,
-      // createdAt: new Date().toISOString(),
-    };
+    // FormData instead of plain JSON so multer can parse the file on the backend
+    const formData = new FormData();
+    formData.append("userId", user.id);
+    formData.append("content", content);
+    formData.append("tags", JSON.stringify(tags));
+    formData.append("location", location);
+    formData.append("visibility", visibility);
+    if (imageFile) {
+      formData.append("image", imageFile); // raw File, not base64
+    }
 
-    
-    // Replace with your backend API call: await axios.post('/api/posts', postPayload)
+    console.log(user)
+
     try {
       const { data } = await axios.post(
         `${BackendURL}/api/data/create-posts`,
-        postPayload, 
-        {headers: {token}},
+        formData,
+        { headers: { token, "Content-Type": "multipart/form-data" } },
       );
 
       if (data.success) {
         // Reset Form
         setContent("");
         setTags([]);
+        setImageFile(null);
         setImagePreview(null);
         setLocation("");
         setShowLocationInput(false);
@@ -109,23 +112,10 @@ export function CreatePost() {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // setTimeout(() => {
-    //   console.log('Post Created:', postPayload);
-    //   setIsSubmitting(false);
-    //   setSuccessMessage(true);
-
-    //   // Reset Form
-    //   setContent('');
-    //   setTags([]);
-    //   setImagePreview(null);
-    //   setLocation('');
-    //   setShowLocationInput(false);
-
-    //   setTimeout(() => setSuccessMessage(false), 3000);
-    // }, 1000);
   };
 
   return (
@@ -154,6 +144,10 @@ export function CreatePost() {
             <span className="font-bold text-gray-900 block text-sm">
               {user.name || "User Name"}
             </span>
+            
+            
+            {/* userId */}
+            {/* <input type="hidden" name="userId"  /> */}
 
             {/* Visibility Selector */}
             <div className="relative inline-block mt-0.5">

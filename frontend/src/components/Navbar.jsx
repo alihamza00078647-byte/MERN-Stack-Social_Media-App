@@ -24,10 +24,10 @@ export function Navbar() {
           to="/"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity"
         >
-          <div className="h-9 w-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+          <div className="h-9 w-9 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
             S
           </div>
-          <span className="hidden md:inline font-bold text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <span className="hidden md:inline font-bold text-xl bg-linear-to-br from-blue-600 to-purple-600 bg-clip-text text-transparent">
             SocialHub
           </span>
         </Link>

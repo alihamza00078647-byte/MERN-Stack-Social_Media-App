@@ -5,11 +5,10 @@ import Home from "./pages/Home";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Settings from "./pages/Settings";
 import Explore from "./pages/Explore";
-import Bookmarks from "./pages/Bookmarks";
 import Profile from "./pages/Profile";
 import Messages from "./pages/Messages";
 import { Login } from "./pages/Login";
-import { Register } from "./pages/Register";
+// import { Register } from "./pages/Register";
 import { PostContext } from "./Context/PostContext";
 import { Loadings } from "./components/Loading";
 import { Toaster } from 'react-hot-toast';
@@ -31,7 +30,7 @@ function App() {
     return (
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/register" element={<Login />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );
