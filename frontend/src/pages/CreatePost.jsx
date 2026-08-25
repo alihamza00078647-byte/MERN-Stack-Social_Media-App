@@ -1,6 +1,7 @@
 import { useState, useRef, useContext } from "react";
 import {
   Image as ImageIcon,
+  Video as VideoIcon,
   X,
   Tag,
   MapPin,
@@ -24,6 +25,8 @@ export function CreatePost() {
   const [tagInput, setTagInput] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoPreview, setVideoPreview] = useState(null);
   const [location, setLocation] = useState("");
   const [showLocationInput, setShowLocationInput] = useState(false);
   const [visibility, setVisibility] = useState("public");
@@ -32,9 +35,7 @@ export function CreatePost() {
 
 
   const fileInputRef = useRef(null);
-  // const user = JSON.parse(
-  //   localStorage.getItem("user"),
-  // );
+  const videoInputRef = useRef(null);
 
   // Handle Image Upload & Preview
   const handleImageChange = (e) => {
@@ -51,6 +52,22 @@ export function CreatePost() {
     setImageFile(null);
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  // Handle Video Upload & Preview
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setVideoFile(file); // actual File object, sent to backend via multer
+      setVideoPreview(URL.createObjectURL(file)); // lightweight local preview URL
+    }
+  };
+
+  const removeVideo = () => {
+    if (videoPreview) URL.revokeObjectURL(videoPreview);
+    setVideoFile(null);
+    setVideoPreview(null);
+    if (videoInputRef.current) videoInputRef.current.value = "";
   };
 
   // Handle Tags
@@ -72,7 +89,7 @@ export function CreatePost() {
   // Submit Post Payload
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!content.trim() && !imagePreview) return;
+    if (!content.trim() && !imagePreview && !videoPreview) return;
 
     setIsSubmitting(true);
 
@@ -85,6 +102,9 @@ export function CreatePost() {
     formData.append("visibility", visibility);
     if (imageFile) {
       formData.append("image", imageFile); // raw File, not base64
+    }
+    if (videoFile) {
+      formData.append("video", videoFile); // raw File, not base64
     }
 
     try {
@@ -100,6 +120,7 @@ export function CreatePost() {
         setTags([]);
         setImageFile(null);
         setImagePreview(null);
+        removeVideo();
         setLocation("");
         setShowLocationInput(false);
 
@@ -180,7 +201,7 @@ export function CreatePost() {
           </div>
         </div>
 
-        {/* Media Preview */}
+        {/* Image Preview */}
         {imagePreview && (
           <div className="relative rounded-2xl overflow-hidden border border-gray-100 group">
             <img
@@ -191,6 +212,24 @@ export function CreatePost() {
             <button
               type="button"
               onClick={removeImage}
+              className="absolute top-3 right-3 p-1.5 bg-gray-900/70 hover:bg-gray-900 text-white rounded-full transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* Video Preview */}
+        {videoPreview && (
+          <div className="relative rounded-2xl overflow-hidden border border-gray-100 group">
+            <video
+              src={videoPreview}
+              controls
+              className="w-full max-h-80 bg-black"
+            />
+            <button
+              type="button"
+              onClick={removeVideo}
               className="absolute top-3 right-3 p-1.5 bg-gray-900/70 hover:bg-gray-900 text-white rounded-full transition-colors"
             >
               <X className="w-4 h-4" />
@@ -265,12 +304,40 @@ export function CreatePost() {
               onChange={handleImageChange}
               className="hidden"
               id="file-input"
+              disabled={!!videoFile}
             />
             <label
               htmlFor="file-input"
-              className="p-2.5 text-gray-500 hover:text-blue-500 hover:bg-blue-50 rounded-full cursor-pointer transition-colors"
+              title={videoFile ? "Remove the video first to add an image" : "Add image"}
+              className={`p-2.5 rounded-full transition-colors ${
+                videoFile
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-500 hover:text-blue-500 hover:bg-blue-50 cursor-pointer"
+              }`}
             >
               <ImageIcon className="w-5 h-5" />
+            </label>
+
+            {/* Video File Input */}
+            <input
+              type="file"
+              accept="video/*"
+              ref={videoInputRef}
+              onChange={handleVideoChange}
+              className="hidden"
+              id="video-input"
+              disabled={!!imageFile}
+            />
+            <label
+              htmlFor="video-input"
+              title={imageFile ? "Remove the image first to add a video" : "Add video"}
+              className={`p-2.5 rounded-full transition-colors ${
+                imageFile
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-500 hover:text-blue-500 hover:bg-blue-50 cursor-pointer"
+              }`}
+            >
+              <VideoIcon className="w-5 h-5" />
             </label>
 
             {/* Location Button */}
@@ -286,7 +353,10 @@ export function CreatePost() {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={(!content.trim() && !imagePreview) || isSubmitting}
+            disabled={
+              (!content.trim() && !imagePreview && !videoPreview) ||
+              isSubmitting
+            }
             className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold text-sm rounded-full shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {isSubmitting ? (
