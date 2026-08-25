@@ -1,9 +1,9 @@
-import multer from "multer";
-import path from "path";
-import fs from "fs";
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 // Ensure uploads folder exists
-const uploadDir = "uploads/";
+const uploadDir = "uploads/photos";
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -39,4 +39,4 @@ const upload = multer({
   },
 });
 
-export default upload;
+exports.upload = upload;

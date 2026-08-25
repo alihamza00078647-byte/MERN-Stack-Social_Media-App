@@ -2,9 +2,11 @@
 
 const createPost = async (req, res) => {
 
-    const { userId, content, tags, image, location, visibility } = req.body;
+    const { userId, content, tags, location, visibility } = req.body;
+    const path = req.file.path;
 
-    console.log(userId, content, tags, location, visibility);
+    
+    console.log(userId, content, tags, location, visibility, image);
     
 
 }

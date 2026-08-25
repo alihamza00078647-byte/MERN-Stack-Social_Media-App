@@ -36,7 +36,6 @@ export function CreatePost() {
   //   localStorage.getItem("user"),
   // );
 
-  
   // Handle Image Upload & Preview
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -88,13 +87,11 @@ export function CreatePost() {
       formData.append("image", imageFile); // raw File, not base64
     }
 
-    console.log(user)
-
     try {
       const { data } = await axios.post(
         `${BackendURL}/api/data/create-posts`,
         formData,
-        { headers: { token, "Content-Type": "multipart/form-data" } },
+        { headers: { token }},
       );
 
       if (data.success) {
