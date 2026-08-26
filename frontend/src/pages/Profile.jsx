@@ -1,41 +1,68 @@
 import { Link } from "react-router-dom";
 import { MapPin, Link as LinkIcon, Calendar } from "lucide-react";
 import { PostCard } from "../components/PostCard";
+import axios from "axios";
+import { useContext } from "react";
+import { PostContext } from "../Context/PostContext";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
+import { useState } from "react";
 
 function Profile() {
-  const userPosts = [
-    {
-      id: 1,
-      author: {
-        name: "Jane Doe",
-        handle: "janedoe",
-        avatar: "JD",
-        verified: true,
-      },
-      content: "Excited to share my latest project with everyone! 🚀",
-      image: null,
-      replies: 45,
-      reposts: 123,
-      likes: 512,
-      timestamp: "2 days ago",
-    },
-    {
-      id: 2,
-      author: {
-        name: "Jane Doe",
-        handle: "janedoe",
-        avatar: "JD",
-        verified: true,
-      },
-      content: "Web development is an art form. Every pixel matters.",
-      image:
-        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&h=300&fit=crop",
-      replies: 89,
-      reposts: 234,
-      likes: 876,
-      timestamp: "5 days ago",
-    },
-  ];
+
+  const {user, BackendURL, token} = useContext(PostContext);
+
+  const [userPosts, setUserPosts] = useState([]);
+
+  // const userPosts = [
+  //   {
+  //     id: 1,
+  //     author: {
+  //       name: "Jane Doe",
+  //       handle: "janedoe",
+  //       avatar: "JD",
+  //       verified: true,
+  //     },
+  //     content: "Excited to share my latest project with everyone! 🚀",
+  //     image: null,
+  //     replies: 45,
+  //     reposts: 123,
+  //     likes: 512,
+  //     timestamp: "2 days ago",
+  //   },
+  //   {
+  //     id: 2,
+  //     author: {
+  //       name: "Jane Doe",
+  //       handle: "janedoe",
+  //       avatar: "JD",
+  //       verified: true,
+  //     },
+  //     content: "Web development is an art form. Every pixel matters.",
+  //     image:
+  //       "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&h=300&fit=crop",
+  //     replies: 89,
+  //     reposts: 234,
+  //     likes: 876,
+  //     timestamp: "5 days ago",
+  //   },
+  // ];
+
+
+  const getProfileData = async () => {
+    const userId = user.id;
+    const { data } = await axios.post(`${BackendURL}/api/data/profile`, {userId}, {headers: {token}});
+    if (data.success) {
+      setUserPosts(data.posts);
+    } else {
+      toast.error(data.message);
+    }
+  }
+
+  useEffect(() => {
+    getProfileData();
+  }, []);
+
 
   return (
     <div className="flex flex-col">

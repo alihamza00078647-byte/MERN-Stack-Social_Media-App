@@ -1,10 +1,18 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const { userRouter } = require('./Router/userRouter');
 const app = express();
 const cors = require('cors');
+
+// Core
+const path = require('path');
+
+// Local 
+const { userRouter } = require('./Router/userRouter');
 const { postRouter } = require('./Router/postRouter');
+const rootDir = require('./utils/pathUtils');
+
+
 
 // Middlewares
 app.use(express.json({limit: '5mb'}));
@@ -49,6 +57,10 @@ app.use('/api/data', postRouter);
 
 
 // 404 handler
+
+app.use(express.static(path.join(rootDir, "uploads")));
+
+
 app.use((req, res) => {
     res.status(404).json({ success: false, message: 'Route not found' });
 });

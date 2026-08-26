@@ -124,7 +124,7 @@ export function CreatePost() {
         setLocation("");
         setShowLocationInput(false);
 
-        toast.success("Post Added Successfully");
+        toast.success(data.message);
         navigate("/profile");
       } else {
         toast.error(data.message);
