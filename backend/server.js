@@ -56,11 +56,10 @@ app.use('/api/data', postRouter);
 // });
 
 
+
+app.use("/uploads", express.static(path.join(rootDir, "uploads/")));
+
 // 404 handler
-
-app.use(express.static(path.join(rootDir, "uploads")));
-
-
 app.use((req, res) => {
     res.status(404).json({ success: false, message: 'Route not found' });
 });

@@ -6,13 +6,19 @@ const createPost = async (req, res) => {
 
     try {
         const { userId, content, tags, location, visibility } = req.body;
-        const image = req.files.image ? req.files.image[0]?.path : null;
-        const video = req.files.video ? req.files.video[0]?.path : null;
+        console.log(req.files.image[0]?.filename);
+        // image path 
+        const image = req.files.image? 
+        `${req.protocol}://${req.get("host")}/uploads/images/${req.files.image[0]?.filename}` : null;
+        
+        // video path
+        const video = req.files.video? 
+        `${req.protocol}://${req.get("host")}/uploads/videos/${req.files.video[0]?.filename}` : null;
 
         const post = new postModel({
             userId, 
             content, 
-            tags: tags ? JSON.parse(tags) : [], 
+            tags: tags ? JSON.parse(tags) : [],
             location,
             visibility,
             image, 
@@ -28,7 +34,20 @@ const createPost = async (req, res) => {
 }
 
 // All Posts to get 
-const getAllPosts = (req, res) => {
+const getAllPosts = async (req, res) => {
+    try {
+        
+        const posts = await postModel.find();
+
+        if (!posts) {
+            res.json({success: false, message: "No Posts Available"});
+        }
+
+        res.json({success: true, posts});
+        
+    } catch (error) {
+        res.json({success: false, message: error.message});
+    }
 
 }
 
@@ -56,8 +75,19 @@ const userProfile = async (req, res) => {
 }
 
 
+// Like Posts Logic to update likes
+const likePost = async (req, res) => {
+
+}
+
+// Post delete 
+const deletePost = async (req, res) => {
+
+}
+
+
 
 
 module.exports = {
-    createPost, getAllPosts, userProfile
+    createPost, getAllPosts, userProfile, likePost, deletePost,
 }

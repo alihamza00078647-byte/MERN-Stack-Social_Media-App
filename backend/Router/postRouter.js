@@ -1,5 +1,5 @@
 const express = require('express');
-const { createPost, userProfile } = require('../Controller/postController');
+const { createPost, userProfile, getAllPosts, likePost, deletePost } = require('../Controller/postController');
 const { verifyToken } = require('../Middlewares/authMiddleware');
 const uploadMedia = require('../Middlewares/uploadMedia');
 const postRouter = express.Router();
@@ -13,5 +13,11 @@ postRouter.post('/create-posts', verifyToken, uploadMedia.fields([
 
 
 postRouter.post('/profile', verifyToken, userProfile);
+
+postRouter.get('/posts', verifyToken, getAllPosts);
+
+postRouter.post('/like-post/:userId', verifyToken, likePost);
+
+postRouter.post('/delete-post/:userId', verifyToken, deletePost);
 
 exports.postRouter = postRouter;

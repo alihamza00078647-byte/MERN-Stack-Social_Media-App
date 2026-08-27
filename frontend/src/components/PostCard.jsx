@@ -30,12 +30,12 @@ export function PostCard({ post }) {
   const author =
     post.userId && typeof post.userId === "object" ? post.userId : null;
   const authorId = author ? author._id : post.userId;
-  const authorName = author?.name || "Unknown User";
+  const authorName = user?.name || "Unknown User";
 
-  const isOwnPost = user && authorId === user._id;
+  const isOwnPost = user && authorId === user.id;
 
   const [likes, setLikes] = useState(post.likes || []);
-  const isLiked = user ? likes.includes(user._id) : false;
+  const isLiked = user ? likes.includes(user.id) : false;
 
   const handleLike = async () => {
     // Optimistic UI update first
@@ -46,10 +46,11 @@ export function PostCard({ post }) {
 
     try {
       const { data } = await axios.post(
-        `${BackendURL}/api/data/like-post/${post._id}`,
+        `${BackendURL}/api/data/like-post/${user.id}`,
         {},
         { headers: { token } }
       );
+      console.log(data);
       if (data.success) {
         setLikes(data.likes); // sync with actual backend state
       } else {
