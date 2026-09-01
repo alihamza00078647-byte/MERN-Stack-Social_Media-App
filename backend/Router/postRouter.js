@@ -18,6 +18,6 @@ postRouter.get('/posts', verifyToken, getAllPosts);
 
 postRouter.post('/like-post/:userId', verifyToken, likePost);
 
-postRouter.post('/delete-post/:userId', verifyToken, deletePost);
+postRouter.delete('/delete-post/:postId', verifyToken, deletePost);
 
 exports.postRouter = postRouter;

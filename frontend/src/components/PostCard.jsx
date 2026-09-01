@@ -47,10 +47,8 @@ export function PostCard({ post }) {
     try {
       const { data } = await axios.post(
         `${BackendURL}/api/data/like-post/${user.id}`,
-        {},
         { headers: { token } }
       );
-      console.log(data);
       if (data.success) {
         setLikes(data.likes); // sync with actual backend state
       } else {
@@ -64,6 +62,7 @@ export function PostCard({ post }) {
       toast.error(error.response?.data?.message || "Couldn't update like");
     }
   };
+
 
   const handleDelete = async () => {
     try {

@@ -6,6 +6,7 @@ import { useContext } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 
+
 function Home() {
   const { BackendURL, token } = useContext(PostContext);
   const [posts, setPosts] = useState([]);
@@ -15,6 +16,7 @@ function Home() {
       const { data } = await axios.get(`${BackendURL}/api/data/posts`, {headers: {token}});
       if (data.success) {
         setPosts(data.posts);
+        console.log("Posts fetched successfully:", data.posts);
       } else {
         toast.error(data.message);
       }
@@ -26,6 +28,7 @@ function Home() {
   useEffect(() => {
     if (token) {
       getAllData();
+      console.log("Token is available, fetching posts...", token);
     }
   }, [token]);
 

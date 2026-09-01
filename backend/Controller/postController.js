@@ -56,19 +56,20 @@ const userProfile = async (req, res) => {
 
     try {
         const {userId} = req.body;
-    const user = await userModel.findById(userId);
+        const user = await userModel.findById(userId);
 
-    // Just in case
-    if (!user) {
-        return res.json({success: false, message: "Unauthorized"});
-    }
+        // Just in case
+        if (!user) {
+            return res.json({success: false, message: "Unauthorized"});
+        }
 
-    const posts = await postModel.find({userId});
-    // if (posts.length === 0) {
-    //     return res.json({message: "No Post Available yet!"});
-    // }
+        const posts = await postModel.find({userId});
+        // if (posts.length === 0) {
+        //     return res.json({message: "No Post Available yet!"});
+        // }
 
-    res.json({success: true, posts});        
+        res.json({success: true, posts});     
+
     } catch (error) {
         res.json({success: false, message: error.message});        
     }
@@ -82,7 +83,23 @@ const likePost = async (req, res) => {
 
 // Post delete 
 const deletePost = async (req, res) => {
+    const { postId } = req.params;
 
+    try {
+
+        const post = await postModel.findById(postId);
+
+        if (!post) {
+            return res.json({success: false, message: "Post not found"});
+        }
+
+        await postModel.findByIdAndDelete(postId);
+
+        res.json({success: true, message: "Post deleted successfully"});
+
+    } catch(error) {
+        res.json({success: false, message: error.message});
+    }
 }
 
 
