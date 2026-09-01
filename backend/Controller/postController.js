@@ -78,15 +78,54 @@ const userProfile = async (req, res) => {
 
 // Like Posts Logic to update likes
 const likePost = async (req, res) => {
+    try {
 
-}
+        const { postId } = req.body;
+        const userId = req.userId;
+
+        const post = await postModel.findById(postId);
+
+        // find if post exists or not
+        if (!post) {
+            return res.json({success: false, message: "Post not found"});
+        } 
+
+
+        // ObjectId ko string banake compare karo - .includes() ObjectId pe kaam nahi karta
+        // if (post.likes.includes(userId)) {
+        //     // User has already liked the post, so unlike it
+        //     post.likes = post.likes.filter((id) => id.toString() !== userId);
+        // } else {
+        //     post.likes.push(userId); // Ensure likes is an array
+        // }
+        
+
+        // Check if the user has already liked the post
+        const alreadyLiked = post.likes.some((id) => id.toString() === userId);
+        console.log("Already liked:", alreadyLiked);
+
+        if (alreadyLiked) {
+            // User has already liked the post, so unlike it
+            post.likes = post.likes.filter((id) => id.toString() !== userId);
+        } else {
+            post.likes.push(userId); // Ensure likes is an array
+        }
+
+        await post.save({ new: true }); // Returns the latest changed document
+
+        res.json({message: "Liked Post", likes: post.likes.length, success: true});
+    } catch (error) {
+        res.json({success: false, message: error.message});
+    }
+
+} 
 
 // Post delete 
 const deletePost = async (req, res) => {
-    const { postId } = req.params;
-
+    
     try {
-
+        
+        const { postId } = req.params;
         const post = await postModel.findById(postId);
 
         if (!post) {

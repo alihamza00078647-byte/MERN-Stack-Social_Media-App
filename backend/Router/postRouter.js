@@ -16,7 +16,7 @@ postRouter.post('/profile', verifyToken, userProfile);
 
 postRouter.get('/posts', verifyToken, getAllPosts);
 
-postRouter.post('/like-post/:userId', verifyToken, likePost);
+postRouter.post('/like-post', verifyToken, likePost);
 
 postRouter.delete('/delete-post/:postId', verifyToken, deletePost);
 

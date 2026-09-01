@@ -1,9 +1,8 @@
 import { Heart, MessageCircle, Share, Trash2, MapPin } from "lucide-react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { PostContext } from "../Context/PostContext";
-
 
 // Simple "2h ago" style formatter from an ISO date string
 function timeAgo(dateString) {
@@ -35,40 +34,41 @@ export function PostCard({ post }) {
   const isOwnPost = user && authorId === user.id;
 
   const [likes, setLikes] = useState(post.likes || []);
-  const isLiked = user ? likes.includes(user.id) : false;
+  // const isLiked = user ? likes.map((userId) => userId.toString() === user.id ) : false;
+  const isLiked = [];
 
   const handleLike = async () => {
     // Optimistic UI update first
     const wasLiked = isLiked;
     setLikes((prev) =>
-      wasLiked ? prev.filter((id) => id !== user._id) : [...prev, user._id]
+      wasLiked ? prev.filter((id) => id !== user.id) : [...prev, user.id],
     );
 
     try {
       const { data } = await axios.post(
-        `${BackendURL}/api/data/like-post/${user.id}`,
-        { headers: { token } }
+        `${BackendURL}/api/data/like-post`,
+        { postId: post._id, userId: user.id },
+        { headers: { token } },
       );
       if (data.success) {
         setLikes(data.likes); // sync with actual backend state
       } else {
-        throw new Error(data.message);
+        toast.error(data.message);
       }
     } catch (error) {
       // rollback on failure
       setLikes((prev) =>
-        wasLiked ? [...prev, user._id] : prev.filter((id) => id !== user._id)
+        wasLiked ? [...prev, user.id] : prev.filter((id) => id !== user.id),
       );
       toast.error(error.response?.data?.message || "Couldn't update like");
     }
   };
 
-
   const handleDelete = async () => {
     try {
       const { data } = await axios.delete(
         `${BackendURL}/api/data/delete-post/${post._id}`,
-        { headers: { token } }
+        { headers: { token } },
       );
       if (data.success) {
         toast.success("Post deleted");
@@ -79,6 +79,12 @@ export function PostCard({ post }) {
       toast.error(error.response?.data?.message || "Couldn't delete post");
     }
   };
+
+  useEffect(() => {
+    // Update isLiked state whenever likes or user changes
+      handleLike(); // Call handleLike to update the isLiked state
+    // Update likes state if post.likes changes from parent
+  }, [token]);
 
   return (
     <div className="border-b border-gray-200 p-4 hover:bg-gray-50 transition-colors duration-200">
