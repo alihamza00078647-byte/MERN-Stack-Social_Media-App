@@ -10,7 +10,7 @@ import Messages from "./pages/Messages";
 import { Login } from "./pages/Login";
 // import { Register } from "./pages/Register";
 import { PostContext } from "./Context/PostContext";
-import { Loadings } from "./components/Loading";
+import { Loading } from "./components/Loading";
 import { Toaster } from 'react-hot-toast';
 import { CreatePost } from "./pages/CreatePost";
 
@@ -20,7 +20,7 @@ function App() {
 
   if (loading) {
     return (
-      <Loadings />
+      <Loading />
     );
   }
 

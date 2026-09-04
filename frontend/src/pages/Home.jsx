@@ -3,136 +3,32 @@ import { PostCard } from "../components/PostCard";
 import { PostContext } from "../Context/PostContext";
 import toast from "react-hot-toast";
 import { useContext } from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchPosts } from "../API/API";
+import { Loading } from "../components/Loading.jsx";
 
 
 function Home() {
-  const { BackendURL, token } = useContext(PostContext);
-  const [posts, setPosts] = useState([]);
+  const { token } = useContext(PostContext);
 
-  const getAllData = async () => {
-    try {
-      const { data } = await axios.get(`${BackendURL}/api/data/posts`, {headers: {token}});
-      if (data.success) {
-        setPosts(data.posts);
-        console.log("Posts fetched successfully:", data.posts);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
+  const {data: posts, isFetching, isError, error} = useQuery({
+    queryKey: ['posts', token], //useState
+    queryFn: () => fetchPosts(token), //useEffect
+    enabled: !!token, // jab tak token na aaye, request fire hi na ho
+  });
 
-  useEffect(() => {
-    if (token) {
-      getAllData();
-      console.log("Token is available, fetching posts...", token);
-    }
-  }, [token]);
+  // return loading state
+  if (isFetching) return <Loading />;
+  
+  // return if error state
+  if (isError)
+    return (
+      <p className="text-center text-red-500 mt-5">
+        Error: {error.message}
+        {toast.error(error.message)}
+      </p>
+    );
 
-  // const dummyPosts = [
-  //   {
-  //     id: 1,
-  //     author: {
-  //       name: "Sarah Johnson",
-  //       handle: "sarahjohnson",
-  //       avatar: "SJ",
-  //       verified: true,
-  //     },
-  //     content:
-  //       "Just launched my new project! Really excited to share what I've been working on for the past few months. The journey has been incredible. 🚀",
-  //     image:
-  //       "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&h=300&fit=crop",
-  //     replies: 234,
-  //     reposts: 1203,
-  //     likes: 4521,
-  //     timestamp: "2 hours ago",
-  //   },
-  //   {
-  //     id: 2,
-  //     author: {
-  //       name: "Alex Chen",
-  //       handle: "alexchen_dev",
-  //       avatar: "AC",
-  //       verified: false,
-  //     },
-  //     content:
-  //       "React hooks have changed my life. No more class components and lifecycle methods. Clean, elegant, and so much more efficient!",
-  //     image: null,
-  //     replies: 87,
-  //     reposts: 342,
-  //     likes: 1245,
-  //     timestamp: "4 hours ago",
-  //   },
-  //   {
-  //     id: 3,
-  //     author: {
-  //       name: "Emma Davis",
-  //       handle: "emmadavis_design",
-  //       avatar: "ED",
-  //       verified: true,
-  //     },
-  //     content:
-  //       "Design tip: Always test your designs on multiple devices. Responsive design isn't just a buzzword, it's essential. Here's what I learned this week:",
-  //     image:
-  //       "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500&h=300&fit=crop",
-  //     replies: 156,
-  //     reposts: 892,
-  //     likes: 3456,
-  //     timestamp: "6 hours ago",
-  //   },
-  //   {
-  //     id: 4,
-  //     author: {
-  //       name: "Michael Brown",
-  //       handle: "michaelbrown_tech",
-  //       avatar: "MB",
-  //       verified: false,
-  //     },
-  //     content:
-  //       "Who else spends 30 minutes looking for a bug and it turns out to be a typo? 😅 Debugging is an art form!",
-  //     image: null,
-  //     replies: 421,
-  //     reposts: 1850,
-  //     likes: 5203,
-  //     timestamp: "8 hours ago",
-  //   },
-  //   {
-  //     id: 5,
-  //     author: {
-  //       name: "Lisa Anderson",
-  //       handle: "lisaanderson_ai",
-  //       avatar: "LA",
-  //       verified: true,
-  //     },
-  //     content:
-  //       "Exploring the latest AI models and their applications in web development. The future is here, and it's amazing! 🤖",
-  //     image:
-  //       "https://images.unsplash.com/photo-1677442d019cecf3da4870fc46f6dcb8d595146e?w=500&h=300&fit=crop",
-  //     replies: 234,
-  //     reposts: 756,
-  //     likes: 2876,
-  //     timestamp: "10 hours ago",
-  //   },
-  //   {
-  //     id: 6,
-  //     author: {
-  //       name: "David Wilson",
-  //       handle: "davidwilson_startup",
-  //       avatar: "DW",
-  //       verified: false,
-  //     },
-  //     content:
-  //       "Building a startup is 10% idea and 90% execution. Focus on solving real problems, not just cool tech. Let's build something meaningful together!",
-  //     image: null,
-  //     replies: 178,
-  //     reposts: 623,
-  //     likes: 1956,
-  //     timestamp: "12 hours ago",
-  //   },
-  // ];
 
   return (
     <div className="flex-1">
@@ -170,7 +66,7 @@ function Home() {
 
       {/* Posts Feed */}
       <div className="max-w-2xl">
-        {posts.map((post) => (
+        {posts?.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
       </div>

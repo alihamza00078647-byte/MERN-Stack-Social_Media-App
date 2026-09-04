@@ -29,21 +29,25 @@ export function PostCard({ post }) {
   const author =
     post.userId && typeof post.userId === "object" ? post.userId : null;
   const authorId = author ? author._id : post.userId;
-  const authorName = user?.name || "Unknown User";
+  // const authorName = user?.name || "Unknown User";
+  const authorName = author?.name || "Unknown User";
 
   const isOwnPost = user && authorId === user.id;
 
+
   const [likes, setLikes] = useState(post.likes || []);
-  // const isLiked = user ? likes.map((userId) => userId.toString() === user.id ) : false;
-  const isLiked = [];
+  console.log(typeof likes)
+  const isLiked = user ? likes.some((userId) => userId === user.id) : false;
 
   const handleLike = async () => {
-    // Optimistic UI update first
+    if (!user) {
+      toast.error("Please log in to like posts");
+      return;
+    }
     const wasLiked = isLiked;
     setLikes((prev) =>
       wasLiked ? prev.filter((id) => id !== user.id) : [...prev, user.id],
     );
-
     try {
       const { data } = await axios.post(
         `${BackendURL}/api/data/like-post`,
@@ -51,12 +55,11 @@ export function PostCard({ post }) {
         { headers: { token } },
       );
       if (data.success) {
-        setLikes(data.likes); // sync with actual backend state
+        setLikes(data.likes);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      // rollback on failure
       setLikes((prev) =>
         wasLiked ? [...prev, user.id] : prev.filter((id) => id !== user.id),
       );
@@ -80,11 +83,10 @@ export function PostCard({ post }) {
     }
   };
 
+
   useEffect(() => {
-    // Update isLiked state whenever likes or user changes
-      handleLike(); // Call handleLike to update the isLiked state
-    // Update likes state if post.likes changes from parent
-  }, [token]);
+    setLikes(post.likes || []); // Call handleLike to update the isLiked state
+  }, [post.likes]);
 
   return (
     <div className="border-b border-gray-200 p-4 hover:bg-gray-50 transition-colors duration-200">
@@ -124,7 +126,7 @@ export function PostCard({ post }) {
 
       {/* Content */}
       {post.content && (
-        <div className="mb-3 ml-15">
+        <div className="mb-3 ml-16">
           <p className="text-gray-900 text-base leading-normal whitespace-pre-wrap">
             {post.content}
           </p>
@@ -133,7 +135,7 @@ export function PostCard({ post }) {
 
       {/* Image */}
       {post.image && (
-        <div className="mb-3 ml-15 rounded-2xl overflow-hidden border border-gray-200">
+        <div className="mb-3 ml-16 rounded-2xl overflow-hidden border border-gray-200">
           <img
             src={post.image}
             alt="Post content"
@@ -144,7 +146,7 @@ export function PostCard({ post }) {
 
       {/* Video */}
       {post.video && (
-        <div className="mb-3 ml-15 rounded-2xl overflow-hidden border border-gray-200 bg-black">
+        <div className="mb-3 ml-16 rounded-2xl overflow-hidden border border-gray-200 bg-black">
           <video src={post.video} controls className="w-full max-h-96" />
         </div>
       )}
@@ -164,7 +166,7 @@ export function PostCard({ post }) {
       )}
 
       {/* Stats */}
-      <div className="flex text-sm text-gray-500 gap-4 mb-3 ml-15 py-2 border-t border-gray-100">
+      <div className="flex text-sm text-gray-500 gap-4 mb-3 ml-16 py-2 border-t border-gray-100">
         <span className="hover:text-blue-500 cursor-pointer">
           {post.comments?.length || 0}{" "}
           <span className="hidden sm:inline">Comments</span>
@@ -175,7 +177,7 @@ export function PostCard({ post }) {
       </div>
 
       {/* Actions */}
-      <div className="flex justify-between text-gray-500 ml-15 pt-2 border-t border-gray-100">
+      <div className="flex justify-between text-gray-500 ml-16 pt-2 border-t border-gray-100">
         <button className="group flex items-center gap-2 px-3 py-2 rounded-full hover:bg-blue-50 hover:text-blue-500 transition-colors">
           <MessageCircle size={18} />
           <span className="text-xs hidden sm:inline">Comment</span>
